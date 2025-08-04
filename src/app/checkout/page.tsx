@@ -105,7 +105,7 @@ export default function CheckoutPage() {
       await new Promise(resolve => setTimeout(resolve, 1500))
 
       // Create order
-      addOrder({
+      const orderId = addOrder({
         items: [...items],
         shippingInfo: { ...shippingInfo },
         subtotal,
@@ -117,8 +117,8 @@ export default function CheckoutPage() {
       // Clear cart
       clearCart()
 
-      // Redirect to success page or orders
-      router.push('/checkout/success')
+      // Redirect to success page with order ID
+      router.push(`/checkout/success?orderId=${orderId}`)
     } catch (error) {
       console.error('Order submission failed:', error)
       alert('Failed to submit order. Please try again.')

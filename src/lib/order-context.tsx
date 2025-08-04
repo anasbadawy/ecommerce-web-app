@@ -17,19 +17,42 @@ export interface ShippingInfo {
 
 export interface Order {
   id: string
-  items: CartItem[]
-  shippingInfo: ShippingInfo
+  orderNumber: string
+  customerName: string
+  customerEmail: string
+  status: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled'
+  orderDate: string
+  shippedDate?: string
+  deliveredDate?: string
+  items: OrderItem[]
   subtotal: number
   shipping: number
   tax: number
   total: number
-  orderDate: Date
-  status: 'pending' | 'processing' | 'shipped' | 'delivered'
+  shippingAddress: {
+    street: string
+    city: string
+    state: string
+    zipCode: string
+    country: string
+  }
+  paymentMethod: string
+  trackingNumber?: string
+}
+
+export interface OrderItem {
+  id: string
+  productId: string
+  productName: string
+  brand: string
+  price: number
+  quantity: number
+  total: number
 }
 
 interface OrderContextType {
   orders: Order[]
-  addOrder: (order: Omit<Order, 'id' | 'orderDate' | 'status'>) => void
+  addOrder: (orderData: { items: CartItem[], shippingInfo: ShippingInfo, subtotal: number, shipping: number, tax: number, total: number }) => string
   getOrderById: (id: string) => Order | undefined
   updateOrderStatus: (id: string, status: Order['status']) => void
 }
@@ -39,14 +62,41 @@ const OrderContext = createContext<OrderContextType | undefined>(undefined)
 export function OrderProvider({ children }: { children: ReactNode }) {
   const [orders, setOrders] = useState<Order[]>([])
 
-  const addOrder = (orderData: Omit<Order, 'id' | 'orderDate' | 'status'>) => {
+  const addOrder = (orderData: { items: CartItem[], shippingInfo: ShippingInfo, subtotal: number, shipping: number, tax: number, total: number }) => {
+    const orderId = Date.now().toString()
+    const orderNumber = `ORD-${new Date().getFullYear()}-${orderId.slice(-6)}`
+    
     const newOrder: Order = {
-      ...orderData,
-      id: Date.now().toString(),
-      orderDate: new Date(),
-      status: 'pending'
+      id: orderId,
+      orderNumber,
+      customerName: `${orderData.shippingInfo.firstName} ${orderData.shippingInfo.lastName}`,
+      customerEmail: orderData.shippingInfo.email,
+      status: 'pending',
+      orderDate: new Date().toISOString(),
+      items: orderData.items.map((item, index) => ({
+        id: `item_${Date.now()}_${index}`,
+        productId: item.product?.id || '',
+        productName: item.product?.name || '',
+        brand: item.product?.brand || '',
+        price: item.product?.price || 0,
+        quantity: item.quantity,
+        total: (item.product?.price || 0) * item.quantity
+      })),
+      subtotal: orderData.subtotal,
+      shipping: orderData.shipping,
+      tax: orderData.tax,
+      total: orderData.total,
+      shippingAddress: {
+        street: orderData.shippingInfo.address,
+        city: orderData.shippingInfo.city,
+        state: orderData.shippingInfo.state,
+        zipCode: orderData.shippingInfo.zipCode,
+        country: orderData.shippingInfo.country
+      },
+      paymentMethod: 'Credit Card'
     }
     setOrders(prev => [newOrder, ...prev])
+    return newOrder.id
   }
 
   const getOrderById = (id: string) => {

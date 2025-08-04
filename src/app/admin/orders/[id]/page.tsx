@@ -6,7 +6,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
-import { adminOrders, type Order } from "@/lib/dummy-data/orders"
+import { adminOrders } from "@/lib/dummy-data/orders"
+import { useOrders, type Order } from "@/lib/order-context"
 import { 
   ArrowLeft, 
   Package, 
@@ -25,6 +26,7 @@ interface OrderDetailsPageProps {
 }
 
 export default function OrderDetailsPage({ params }: OrderDetailsPageProps) {
+  const { orders: contextOrders, updateOrderStatus } = useOrders()
   const [resolvedParams, setResolvedParams] = useState<{ id: string } | null>(null)
   const [order, setOrder] = useState<Order | null>(null)
   const [isEditingStatus, setIsEditingStatus] = useState(false)
@@ -37,14 +39,22 @@ export default function OrderDetailsPage({ params }: OrderDetailsPageProps) {
 
   // Find order when params are resolved
   useEffect(() => {
+    let foundOrder
     if (resolvedParams) {
-      const foundOrder = adminOrders.find(o => o.id === resolvedParams.id)
+      // First check context orders (new orders from checkout)
+      foundOrder = contextOrders.find(o => o.id === resolvedParams.id)
+      
+      // If not found in context, check dummy data
+      if (!foundOrder) {
+        foundOrder = adminOrders.find(o => o.id === resolvedParams.id)
+      }
+      
       if (foundOrder) {
-        setOrder(foundOrder)
+        setOrder({ ...foundOrder })
         setNewStatus(foundOrder.status)
       }
     }
-  }, [resolvedParams])
+  }, [resolvedParams, contextOrders])
 
   if (!resolvedParams) {
     return <div className="container mx-auto p-6">Loading...</div>
@@ -95,12 +105,24 @@ export default function OrderDetailsPage({ params }: OrderDetailsPageProps) {
   }
 
   const handleStatusUpdate = () => {
-    // Update the order status (in a real app, this would be an API call)
-    const updatedOrder = { ...order, status: newStatus }
-    setOrder(updatedOrder)
-    setIsEditingStatus(false)
+    if (!order) return
     
-    // Show success message (you could use a toast library here)
+    // Check if this is a context order (from checkout) or dummy data order
+    const isContextOrder = contextOrders.some(o => o.id === order.id)
+    
+    if (isContextOrder) {
+      // Update order in context
+      updateOrderStatus(order.id, newStatus)
+      // Update local state
+      const updatedOrder = { ...order, status: newStatus }
+      setOrder(updatedOrder)
+    } else {
+      // For dummy data orders, just update local state (no persistence)
+      const updatedOrder = { ...order, status: newStatus }
+      setOrder(updatedOrder)
+    }
+    
+    setIsEditingStatus(false)
     alert(`Order status updated to ${newStatus}`)
   }
 

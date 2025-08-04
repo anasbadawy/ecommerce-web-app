@@ -1,9 +1,15 @@
 import Link from "next/link"
-import { CheckCircle, Package, ArrowRight } from "lucide-react"
+import { CheckCircle, Package, Eye } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 
-export default function CheckoutSuccessPage() {
+interface CheckoutSuccessPageProps {
+  searchParams: Promise<{ orderId?: string }>
+}
+
+export default async function CheckoutSuccessPage({ searchParams }: CheckoutSuccessPageProps) {
+  const params = await searchParams
+  const orderId = params.orderId
   return (
     <div className="container mx-auto px-4 py-8">
       <Card className="text-center py-16 max-w-lg mx-auto">
@@ -21,12 +27,21 @@ export default function CheckoutSuccessPage() {
                 Continue Shopping
               </Button>
             </Link>
-            <Link href="/admin">
-              <Button variant="outline" className="w-full">
-                View Orders
-                <ArrowRight className="w-4 h-4 ml-2" />
-              </Button>
-            </Link>
+            {orderId ? (
+              <Link href={`/admin/orders/${orderId}`}>
+                <Button variant="outline" className="w-full">
+                  <Eye className="w-4 h-4 mr-2" />
+                  View Order Details
+                </Button>
+              </Link>
+            ) : (
+              <Link href="/admin/orders">
+                <Button variant="outline" className="w-full">
+                  View All Orders
+                  <Eye className="w-4 h-4 ml-2" />
+                </Button>
+              </Link>
+            )}
           </div>
         </CardContent>
       </Card>
