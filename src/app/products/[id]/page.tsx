@@ -1,5 +1,6 @@
 "use client"
 
+import React from "react"
 import { notFound } from "next/navigation"
 import { ArrowLeft, Star, ShoppingCart, Shield, Truck, RotateCcw, Award } from "lucide-react"
 import Link from "next/link"
@@ -11,16 +12,25 @@ import { bestSellingProducts } from "@/lib/dummy-data"
 import { useCart } from "@/lib/cart-context"
 
 interface ProductDetailsPageProps {
-  params: {
+  params: Promise<{
     id: string
-  }
+  }>
 }
 
 export default function ProductDetailsPage({ params }: ProductDetailsPageProps) {
   const { addToCart, isInCart } = useCart()
+  const [resolvedParams, setResolvedParams] = React.useState<{ id: string } | null>(null)
+  
+  React.useEffect(() => {
+    params.then(setResolvedParams)
+  }, [params])
+  
+  if (!resolvedParams) {
+    return <div className="container mx-auto px-4 py-8">Loading...</div>
+  }
   
   // Find the product by ID
-  const product = bestSellingProducts.find(p => p.id === params.id)
+  const product = bestSellingProducts.find(p => p.id === resolvedParams.id)
   
   if (!product) {
     notFound()

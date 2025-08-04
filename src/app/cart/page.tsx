@@ -180,10 +180,12 @@ export default function CartPage() {
                   </div>
                 )}
 
-                <Button className="w-full" size="lg">
-                  Proceed to Checkout
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Button>
+                <Link href="/checkout">
+                  <Button className="w-full" size="lg">
+                    Proceed to Checkout
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </Button>
+                </Link>
 
                 <Link href="/products">
                   <Button variant="outline" className="w-full">
