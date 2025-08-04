@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { ArrowRight, Shield, Truck, Award, Star } from "lucide-react";
+import { ProductCarousel } from "@/components/ProductCarousel";
+import { FAQ } from "@/components/FAQ";
 
 export default function Home() {
   return (
@@ -32,13 +34,20 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Features Section */}
+      {/* Best Selling Products Carousel */}
       <section className="py-16 px-4 sm:px-6 lg:px-8">
+        <div className="container mx-auto">
+          <ProductCarousel />
+        </div>
+      </section>
+
+      {/* Features Section */}
+      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-muted/30">
         <div className="container mx-auto">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">Why Choose SupplementStore?</h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              We're committed to providing you with the highest quality supplements and exceptional service.
+              We&apos;re committed to providing you with the highest quality supplements and exceptional service.
             </p>
           </div>
           
@@ -87,7 +96,7 @@ export default function Home() {
       </section>
 
       {/* Popular Categories */}
-      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-muted/30">
+      <section className="py-16 px-4 sm:px-6 lg:px-8">
         <div className="container mx-auto">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">Popular Categories</h2>
@@ -136,8 +145,11 @@ export default function Home() {
         </div>
       </section>
 
+      {/* FAQ Section */}
+      <FAQ />
+
       {/* CTA Section */}
-      <section className="py-16 px-4 sm:px-6 lg:px-8">
+      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-muted/30">
         <div className="container mx-auto text-center">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">Ready to Transform Your Health?</h2>
           <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">

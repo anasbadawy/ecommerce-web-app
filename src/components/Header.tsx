@@ -4,6 +4,7 @@ import Link from "next/link"
 import { useState } from "react"
 import { Menu, X, ShoppingCart, User, Package } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { Button } from "@/components/ui/button"
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -83,16 +84,18 @@ export function Header() {
             </Link>
 
             {/* Mobile menu button */}
-            <button
+            <Button
+              variant="ghost"
+              size="icon"
               onClick={toggleMenu}
-              className="md:hidden p-2 rounded-md text-muted-foreground hover:text-primary hover:bg-accent"
+              className="md:hidden"
             >
               {isMenuOpen ? (
                 <X className="h-6 w-6" />
               ) : (
                 <Menu className="h-6 w-6" />
               )}
-            </button>
+            </Button>
           </div>
         </div>
 
