@@ -6,6 +6,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { Label } from "@/components/ui/label"
 import { adminOrders, type Order } from "@/lib/dummy-data/orders"
 import { ChevronLeft, ChevronRight, Search, Filter, Eye } from "lucide-react"
 
@@ -123,7 +126,7 @@ export default function AdminOrdersPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
             {/* Search */}
             <div className="lg:col-span-2">
-              <label className="block text-sm font-medium mb-1">Search</label>
+              <Label className="block text-sm font-medium mb-1">Search</Label>
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                 <Input
@@ -137,24 +140,25 @@ export default function AdminOrdersPage() {
 
             {/* Status Filter */}
             <div>
-              <label className="block text-sm font-medium mb-1">Status</label>
-              <select
-                value={statusFilter}
-                onChange={(e) => setStatusFilter(e.target.value)}
-                className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              >
-                <option value="all">All Status</option>
-                <option value="pending">Pending</option>
-                <option value="processing">Processing</option>
-                <option value="shipped">Shipped</option>
-                <option value="delivered">Delivered</option>
-                <option value="cancelled">Cancelled</option>
-              </select>
+              <Label className="block text-sm font-medium mb-1">Status</Label>
+              <Select value={statusFilter} onValueChange={setStatusFilter}>
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="All Status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Status</SelectItem>
+                  <SelectItem value="pending">Pending</SelectItem>
+                  <SelectItem value="processing">Processing</SelectItem>
+                  <SelectItem value="shipped">Shipped</SelectItem>
+                  <SelectItem value="delivered">Delivered</SelectItem>
+                  <SelectItem value="cancelled">Cancelled</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
 
             {/* Date From */}
             <div>
-              <label className="block text-sm font-medium mb-1">From Date</label>
+              <Label className="block text-sm font-medium mb-1">From Date</Label>
               <Input
                 type="date"
                 value={dateFromFilter}
@@ -164,7 +168,7 @@ export default function AdminOrdersPage() {
 
             {/* Date To */}
             <div>
-              <label className="block text-sm font-medium mb-1">To Date</label>
+              <Label className="block text-sm font-medium mb-1">To Date</Label>
               <Input
                 type="date"
                 value={dateToFilter}
@@ -191,41 +195,41 @@ export default function AdminOrdersPage() {
       <Card>
         <CardContent className="p-0">
           <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-gray-50 border-b">
-                <tr>
-                  <th className="text-left p-4 font-medium text-black">Order</th>
-                  <th className="text-left p-4 font-medium text-black">Customer</th>
-                  <th className="text-left p-4 font-medium text-black">Products</th>
-                  <th className="text-left p-4 font-medium text-black">Status</th>
-                  <th className="text-left p-4 font-medium text-black">Date</th>
-                  <th className="text-left p-4 font-medium text-black">Total</th>
-                  <th className="text-left p-4 font-medium text-black">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Order</TableHead>
+                  <TableHead>Customer</TableHead>
+                  <TableHead>Products</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead>Date</TableHead>
+                  <TableHead>Total</TableHead>
+                  <TableHead>Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
                 {currentOrders.length === 0 ? (
-                  <tr>
-                    <td colSpan={7} className="text-center p-8 text-gray-500">
+                  <TableRow>
+                    <TableCell colSpan={7} className="text-center p-8 text-gray-500">
                       No orders found matching your criteria
-                    </td>
-                  </tr>
+                    </TableCell>
+                  </TableRow>
                 ) : (
                   currentOrders.map((order) => (
-                    <tr key={order.id} className="border-b hover:opacity-70">
-                      <td className="p-4">
+                    <TableRow key={order.id} className="hover:opacity-70 transition-colors duration-200">
+                      <TableCell>
                         <div>
                           <div className="font-medium">{order.orderNumber}</div>
                           <div className="text-sm text-gray-500">#{order.id}</div>
                         </div>
-                      </td>
-                      <td className="p-4">
+                      </TableCell>
+                      <TableCell>
                         <div>
                           <div className="font-medium">{order.customerName}</div>
                           <div className="text-sm text-gray-500">{order.customerEmail}</div>
                         </div>
-                      </td>
-                      <td className="p-4">
+                      </TableCell>
+                      <TableCell>
                         <div className="space-y-1">
                           {order.items.slice(0, 2).map((item, index) => (
                             <div key={index} className="text-sm">
@@ -238,33 +242,33 @@ export default function AdminOrdersPage() {
                             </div>
                           )}
                         </div>
-                      </td>
-                      <td className="p-4">
+                      </TableCell>
+                      <TableCell>
                         <Badge className={getStatusColor(order.status)}>
                           {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
                         </Badge>
-                      </td>
-                      <td className="p-4">
+                      </TableCell>
+                      <TableCell>
                         <div className="text-sm">
                           {formatDate(order.orderDate)}
                         </div>
-                      </td>
-                      <td className="p-4">
+                      </TableCell>
+                      <TableCell>
                         <div className="font-medium">${order.total.toFixed(2)}</div>
-                      </td>
-                      <td className="p-4">
+                      </TableCell>
+                      <TableCell>
                         <Button size="sm" variant="outline" className="flex items-center gap-1" asChild>
                           <Link href={`/admin/orders/${order.id}`}>
                             <Eye className="h-3 w-3" />
                             View
                           </Link>
                         </Button>
-                      </td>
-                    </tr>
+                      </TableCell>
+                    </TableRow>
                   ))
                 )}
-              </tbody>
-            </table>
+              </TableBody>
+            </Table>
           </div>
         </CardContent>
       </Card>
