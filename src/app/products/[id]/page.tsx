@@ -1,15 +1,13 @@
 "use client"
 
-import { useState } from "react"
 import { notFound } from "next/navigation"
-import { ArrowLeft, Star, ShoppingCart, Minus, Plus, Shield, Truck, RotateCcw, Award } from "lucide-react"
+import { ArrowLeft, Star, ShoppingCart, Shield, Truck, RotateCcw, Award } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Separator } from "@/components/ui/separator"
-import { bestSellingProducts, type Product } from "@/lib/dummy-data"
+import { bestSellingProducts } from "@/lib/dummy-data"
 import { useCart } from "@/lib/cart-context"
 
 interface ProductDetailsPageProps {
@@ -19,8 +17,7 @@ interface ProductDetailsPageProps {
 }
 
 export default function ProductDetailsPage({ params }: ProductDetailsPageProps) {
-  const [quantity, setQuantity] = useState(1)
-  const { addToCart } = useCart()
+  const { addToCart, isInCart } = useCart()
   
   // Find the product by ID
   const product = bestSellingProducts.find(p => p.id === params.id)
@@ -30,16 +27,10 @@ export default function ProductDetailsPage({ params }: ProductDetailsPageProps) 
   }
 
   const handleAddToCart = () => {
-    addToCart(product, quantity)
+    addToCart(product)
     // Show success feedback (could be a toast notification)
-    alert(`Added ${quantity} x ${product.name} to cart!`)
-  }
-
-  const handleQuantityChange = (change: number) => {
-    const newQuantity = quantity + change
-    if (newQuantity >= 1 && newQuantity <= 10) {
-      setQuantity(newQuantity)
-    }
+    const isNowInCart = !isInCart(product.id)
+    alert(isNowInCart ? `Added ${product.name} to cart!` : `Removed ${product.name} from cart!`)
   }
 
   const savings = product.originalPrice ? product.originalPrice - product.price : 0
@@ -162,37 +153,10 @@ export default function ProductDetailsPage({ params }: ProductDetailsPageProps) 
               </div>
               
               {savings > 0 && (
-                <p className="text-sm text-green-600 font-medium mb-4">
+                <p className="text-sm text-green-600 font-medium mb-6">
                   You save ${savings.toFixed(2)}!
                 </p>
               )}
-
-              {/* Quantity Selector */}
-              <div className="mb-6">
-                <label className="text-sm font-medium mb-2 block">Quantity</label>
-                <div className="flex items-center gap-3">
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    onClick={() => handleQuantityChange(-1)}
-                    disabled={quantity <= 1}
-                  >
-                    <Minus className="h-4 w-4" />
-                  </Button>
-                  <span className="w-12 text-center font-medium">{quantity}</span>
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    onClick={() => handleQuantityChange(1)}
-                    disabled={quantity >= 10}
-                  >
-                    <Plus className="h-4 w-4" />
-                  </Button>
-                </div>
-                <p className="text-xs text-muted-foreground mt-1">
-                  Maximum 10 items per order
-                </p>
-              </div>
 
               {/* Add to Cart Button */}
               <Button 
@@ -200,19 +164,16 @@ export default function ProductDetailsPage({ params }: ProductDetailsPageProps) 
                 size="lg"
                 onClick={handleAddToCart}
                 disabled={!product.inStock}
+                variant={isInCart(product.id) ? "destructive" : "default"}
               >
                 <ShoppingCart className="w-5 h-5 mr-2" />
-                {product.inStock ? `Add ${quantity} to Cart` : "Out of Stock"}
+                {!product.inStock 
+                  ? "Out of Stock" 
+                  : isInCart(product.id) 
+                    ? "Remove from Cart" 
+                    : "Add to Cart"
+                }
               </Button>
-
-              {/* Total Price */}
-              <div className="text-center">
-                <p className="text-sm text-muted-foreground">
-                  Total: <span className="font-bold text-foreground">
-                    ${(product.price * quantity).toFixed(2)}
-                  </span>
-                </p>
-              </div>
             </CardContent>
           </Card>
 
