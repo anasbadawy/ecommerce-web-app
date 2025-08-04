@@ -15,16 +15,17 @@ interface CartState {
 }
 
 type CartAction = 
-  | { type: 'ADD_TO_CART'; product: Product; quantity: number }
+  | { type: 'ADD_TO_CART'; product: Product }
   | { type: 'REMOVE_FROM_CART'; productId: string }
   | { type: 'UPDATE_QUANTITY'; productId: string; quantity: number }
   | { type: 'CLEAR_CART' }
 
 interface CartContextType extends CartState {
-  addToCart: (product: Product, quantity: number) => void
+  addToCart: (product: Product) => void
   removeFromCart: (productId: string) => void
   updateQuantity: (productId: string, quantity: number) => void
   clearCart: () => void
+  isInCart: (productId: string) => boolean
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined)
@@ -45,15 +46,11 @@ const cartReducer = (state: CartState, action: CartAction): CartState => {
       let newItems: CartItem[]
       
       if (existingItemIndex > -1) {
-        // Update existing item quantity
-        newItems = state.items.map((item, index) =>
-          index === existingItemIndex
-            ? { ...item, quantity: item.quantity + action.quantity }
-            : item
-        )
+        // Product already exists, remove it (toggle off)
+        newItems = state.items.filter(item => item.product.id !== action.product.id)
       } else {
-        // Add new item
-        newItems = [...state.items, { product: action.product, quantity: action.quantity }]
+        // Add new item with quantity 1 (single quantity per product)
+        newItems = [...state.items, { product: action.product, quantity: 1 }]
       }
       
       const totals = calculateTotals(newItems)
@@ -99,46 +96,17 @@ const cartReducer = (state: CartState, action: CartAction): CartState => {
   }
 }
 
-const getInitialState = (): CartState => {
-  if (typeof window !== 'undefined') {
-    try {
-      const savedCart = localStorage.getItem('cart')
-      if (savedCart) {
-        const parsedCart = JSON.parse(savedCart)
-        const totals = calculateTotals(parsedCart)
-        return {
-          items: parsedCart,
-          ...totals
-        }
-      }
-    } catch (error) {
-      console.error('Error loading cart from localStorage:', error)
-    }
-  }
-  
-  return {
-    items: [],
-    totalItems: 0,
-    totalPrice: 0
-  }
+const initialState: CartState = {
+  items: [],
+  totalItems: 0,
+  totalPrice: 0
 }
 
 export function CartProvider({ children }: { children: ReactNode }) {
-  const [state, dispatch] = useReducer(cartReducer, getInitialState())
+  const [state, dispatch] = useReducer(cartReducer, initialState)
   
-  // Save to localStorage whenever cart state changes
-  React.useEffect(() => {
-    if (typeof window !== 'undefined') {
-      try {
-        localStorage.setItem('cart', JSON.stringify(state.items))
-      } catch (error) {
-        console.error('Error saving cart to localStorage:', error)
-      }
-    }
-  }, [state.items])
-  
-  const addToCart = (product: Product, quantity: number) => {
-    dispatch({ type: 'ADD_TO_CART', product, quantity })
+  const addToCart = (product: Product) => {
+    dispatch({ type: 'ADD_TO_CART', product })
   }
   
   const removeFromCart = (productId: string) => {
@@ -153,6 +121,10 @@ export function CartProvider({ children }: { children: ReactNode }) {
     dispatch({ type: 'CLEAR_CART' })
   }
   
+  const isInCart = (productId: string) => {
+    return state.items.some(item => item.product.id === productId)
+  }
+  
   return (
     <CartContext.Provider
       value={{
@@ -160,7 +132,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
         addToCart,
         removeFromCart,
         updateQuantity,
-        clearCart
+        clearCart,
+        isInCart
       }}
     >
       {children}

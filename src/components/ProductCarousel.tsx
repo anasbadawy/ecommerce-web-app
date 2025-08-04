@@ -125,10 +125,10 @@ export function ProductCarousel() {
 }
 
 function ProductCard({ product }: { product: Product }) {
-  const { addToCart } = useCart()
+  const { addToCart, isInCart } = useCart()
 
   const handleAddToCart = () => {
-    addToCart(product, 1)
+    addToCart(product)
   }
 
   return (
@@ -208,9 +208,15 @@ function ProductCard({ product }: { product: Product }) {
             className="w-full" 
             onClick={handleAddToCart}
             disabled={!product.inStock}
+            variant={isInCart(product.id) ? "destructive" : "default"}
           >
             <ShoppingCart className="h-4 w-4 mr-2" />
-            {product.inStock ? "Add to Cart" : "Out of Stock"}
+            {!product.inStock 
+              ? "Out of Stock" 
+              : isInCart(product.id) 
+                ? "Remove from Cart" 
+                : "Add to Cart"
+            }
           </Button>
           <Link href={`/products/${product.id}`}>
             <Button variant="outline" className="w-full">
