@@ -1,12 +1,13 @@
 "use client"
 
 import React, { useState, useMemo } from 'react'
+import Link from 'next/link'
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { adminOrders, type Order } from "@/lib/dummy-data/orders"
-import { ChevronLeft, ChevronRight, Search, Filter, Eye, Download } from "lucide-react"
+import { ChevronLeft, ChevronRight, Search, Filter, Eye } from "lucide-react"
 
 const ITEMS_PER_PAGE = 10
 
@@ -108,10 +109,6 @@ export default function AdminOrdersPage() {
             Showing {startIndex + 1}-{Math.min(endIndex, filteredOrders.length)} of {filteredOrders.length} orders
           </p>
         </div>
-        <Button className="flex items-center gap-2">
-          <Download className="h-4 w-4" />
-          Export Orders
-        </Button>
       </div>
 
       {/* Filters */}
@@ -256,9 +253,11 @@ export default function AdminOrdersPage() {
                         <div className="font-medium">${order.total.toFixed(2)}</div>
                       </td>
                       <td className="p-4">
-                        <Button size="sm" variant="outline" className="flex items-center gap-1">
-                          <Eye className="h-3 w-3" />
-                          View
+                        <Button size="sm" variant="outline" className="flex items-center gap-1" asChild>
+                          <Link href={`/admin/orders/${order.id}`}>
+                            <Eye className="h-3 w-3" />
+                            View
+                          </Link>
                         </Button>
                       </td>
                     </tr>
