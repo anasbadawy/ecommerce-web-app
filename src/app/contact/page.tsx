@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Separator } from "@/components/ui/separator"
+import { Label } from "@/components/ui/label"
 
 export default function ContactPage() {
   return (
@@ -125,32 +126,32 @@ export default function ContactPage() {
               <form className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <label className="text-sm font-medium">First Name *</label>
+                    <Label className="text-sm font-medium">First Name *</Label>
                     <Input placeholder="Enter your first name" />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-sm font-medium">Last Name *</label>
+                    <Label className="text-sm font-medium">Last Name *</Label>
                     <Input placeholder="Enter your last name" />
                   </div>
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-sm font-medium">Email Address *</label>
+                  <Label className="text-sm font-medium">Email Address *</Label>
                   <Input type="email" placeholder="Enter your email address" />
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-sm font-medium">Phone Number</label>
+                  <Label className="text-sm font-medium">Phone Number</Label>
                   <Input type="tel" placeholder="Enter your phone number" />
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-sm font-medium">Subject *</label>
+                  <Label className="text-sm font-medium">Subject *</Label>
                   <Input placeholder="What is this regarding?" />
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-sm font-medium">Message *</label>
+                  <Label className="text-sm font-medium">Message *</Label>
                   <Textarea 
                     placeholder="Please provide details about your inquiry..."
                     className="min-h-[120px] resize-none"

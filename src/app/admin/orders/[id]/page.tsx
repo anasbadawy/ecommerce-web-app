@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { adminOrders } from "@/lib/dummy-data/orders"
 import { useOrders, type Order } from "@/lib/order-context"
 import { 
@@ -152,17 +153,18 @@ export default function OrderDetailsPage({ params }: OrderDetailsPageProps) {
         <div className="flex items-center gap-3">
           {isEditingStatus ? (
             <div className="flex items-center gap-2">
-              <select
-                value={newStatus}
-                onChange={(e) => setNewStatus(e.target.value as Order['status'])}
-                className="p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              >
-                <option value="pending">Pending</option>
-                <option value="processing">Processing</option>
-                <option value="shipped">Shipped</option>
-                <option value="delivered">Delivered</option>
-                <option value="cancelled">Cancelled</option>
-              </select>
+              <Select value={newStatus} onValueChange={(value) => setNewStatus(value as Order['status'])}>
+                <SelectTrigger className="w-40">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="pending">Pending</SelectItem>
+                  <SelectItem value="processing">Processing</SelectItem>
+                  <SelectItem value="shipped">Shipped</SelectItem>
+                  <SelectItem value="delivered">Delivered</SelectItem>
+                  <SelectItem value="cancelled">Cancelled</SelectItem>
+                </SelectContent>
+              </Select>
               <Button size="sm" onClick={handleStatusUpdate}>
                 <Save className="h-3 w-3 mr-1" />
                 Save

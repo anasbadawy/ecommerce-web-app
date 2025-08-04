@@ -1,13 +1,15 @@
 "use client"
 
 import { useState, useMemo } from "react"
-import { Search, Grid, List, Star, ShoppingCart, Package, SlidersHorizontal, X, ChevronDown } from "lucide-react"
+import { Search, Grid, List, Star, ShoppingCart, Package, SlidersHorizontal, X } from "lucide-react"
 import Link from "next/link"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Label } from "@/components/ui/label"
 import { bestSellingProducts, type Product } from "@/lib/dummy-data"
 import { cn } from "@/lib/utils"
 import { useCart } from "@/lib/cart-context"
@@ -132,20 +134,20 @@ export default function ProductsPage() {
             {/* Controls */}
             <div className="flex gap-2 flex-wrap">
               {/* Sort Dropdown */}
-              <div className="relative">
-                <select
-                  value={sortBy}
-                  onChange={(e) => setSortBy(e.target.value as SortOption)}
-                  className="appearance-none bg-background border border-input rounded-md px-3 py-2 text-sm pr-8 focus:outline-none focus:ring-2 focus:ring-ring"
-                >
-                  <option value="bestsellers">Best Sellers First</option>
-                  <option value="name-asc">Name: A to Z</option>
-                  <option value="name-desc">Name: Z to A</option>
-                  <option value="price-asc">Price: Low to High</option>
-                  <option value="price-desc">Price: High to Low</option>
-                  <option value="rating">Highest Rated</option>
-                </select>
-                <ChevronDown className="absolute right-2 top-2.5 h-4 w-4 text-muted-foreground pointer-events-none" />
+              <div className="w-48">
+                <Select value={sortBy} onValueChange={(value) => setSortBy(value as SortOption)}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Sort by" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="bestsellers">Best Sellers First</SelectItem>
+                    <SelectItem value="name-asc">Name: A to Z</SelectItem>
+                    <SelectItem value="name-desc">Name: Z to A</SelectItem>
+                    <SelectItem value="price-asc">Price: Low to High</SelectItem>
+                    <SelectItem value="price-desc">Price: High to Low</SelectItem>
+                    <SelectItem value="rating">Highest Rated</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
 
               {/* Filters Toggle */}
@@ -224,7 +226,7 @@ export default function ProductsPage() {
               <h3 className="font-medium mb-3">Price Range</h3>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="text-sm text-muted-foreground">Min Price</label>
+                  <Label className="text-sm text-muted-foreground">Min Price</Label>
                   <Input
                     type="number"
                     min="0"
@@ -234,7 +236,7 @@ export default function ProductsPage() {
                   />
                 </div>
                 <div>
-                  <label className="text-sm text-muted-foreground">Max Price</label>
+                  <Label className="text-sm text-muted-foreground">Max Price</Label>
                   <Input
                     type="number"
                     min="0"
