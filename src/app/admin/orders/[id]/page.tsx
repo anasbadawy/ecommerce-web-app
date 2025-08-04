@@ -134,7 +134,7 @@ export default function OrderDetailsPage({ params }: OrderDetailsPageProps) {
   return (
     <div className="container mx-auto p-6 space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between md:flex-row flex-col">
         <div className="flex items-center gap-4">
           <Button variant="outline" asChild>
             <Link href="/admin/orders">
@@ -143,7 +143,7 @@ export default function OrderDetailsPage({ params }: OrderDetailsPageProps) {
             </Link>
           </Button>
           <div>
-            <h1 className="text-3xl font-bold">{order.orderNumber}</h1>
+            <h1 className="md:text-3xl text-xl text-center font-bold">{order.orderNumber}</h1>
             <p className="text-gray-600">Order ID: {order.id}</p>
           </div>
         </div>
