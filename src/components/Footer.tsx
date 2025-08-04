@@ -151,7 +151,7 @@ export function Footer() {
                 Terms of Service
               </Link>
               <Link 
-                href="/admin" 
+                href="/admin/orders" 
                 className="text-sm text-muted-foreground hover:text-primary transition-colors"
               >
                 Admin Portal

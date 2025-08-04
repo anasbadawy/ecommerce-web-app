@@ -65,7 +65,7 @@ export function Header() {
           <div className="flex items-center space-x-4">
             {/* Admin Portal Link */}
             <Link 
-              href="/admin" 
+              href="/admin/orders" 
               className="hidden sm:flex items-center space-x-1 text-sm font-medium text-muted-foreground hover:text-primary transition-colors"
             >
               <User className="h-4 w-4" />
@@ -146,7 +146,7 @@ export function Header() {
             </Link>
             <div className="border-t pt-4">
               <Link 
-                href="/admin" 
+                href="/admin/orders" 
                 className="flex items-center space-x-2 text-sm font-medium text-muted-foreground hover:text-primary transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
