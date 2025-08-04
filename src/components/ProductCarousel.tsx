@@ -7,6 +7,7 @@ import Image from "next/image"
 import { cn } from "@/lib/utils"
 import { bestSellingProducts, type Product } from "@/lib/dummy-data"
 import { Button } from "@/components/ui/button"
+import { useCart } from "@/lib/cart-context"
 
 export function ProductCarousel() {
   const [currentIndex, setCurrentIndex] = useState(0)
@@ -124,36 +125,46 @@ export function ProductCarousel() {
 }
 
 function ProductCard({ product }: { product: Product }) {
+  const { addToCart } = useCart()
+
+  const handleAddToCart = () => {
+    addToCart(product, 1)
+  }
+
   return (
-    <div className="bg-card border border-border rounded-lg overflow-hidden hover:shadow-lg transition-shadow">
+    <div className="bg-card border border-border rounded-lg overflow-hidden hover:shadow-lg transition-shadow group">
       {/* Product Image */}
-      <div className="relative aspect-square bg-muted">
-        <Image
-          src={product.image}
-          alt={product.name}
-          fill
-          className="object-cover"
-          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-        />
-        {product.isTopSeller && (
-          <div className="absolute top-3 left-3 bg-primary text-primary-foreground text-xs font-medium px-2 py-1 rounded">
-            Best Seller
-          </div>
-        )}
-        {product.originalPrice && (
-          <div className="absolute top-3 right-3 bg-destructive text-destructive-foreground text-xs font-medium px-2 py-1 rounded">
-            Save ${(product.originalPrice - product.price).toFixed(2)}
-          </div>
-        )}
-      </div>
+      <Link href={`/products/${product.id}`}>
+        <div className="relative aspect-square bg-muted cursor-pointer">
+          <Image
+            src={product.image}
+            alt={product.name}
+            fill
+            className="object-cover group-hover:scale-105 transition-transform duration-300"
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+          />
+          {product.isTopSeller && (
+            <div className="absolute top-3 left-3 bg-primary text-primary-foreground text-xs font-medium px-2 py-1 rounded">
+              Best Seller
+            </div>
+          )}
+          {product.originalPrice && (
+            <div className="absolute top-3 right-3 bg-destructive text-destructive-foreground text-xs font-medium px-2 py-1 rounded">
+              Save ${(product.originalPrice - product.price).toFixed(2)}
+            </div>
+          )}
+        </div>
+      </Link>
 
       {/* Product Info */}
       <div className="p-4">
         <div className="mb-2">
           <p className="text-sm text-muted-foreground">{product.brand}</p>
-          <h3 className="font-semibold text-lg leading-tight line-clamp-2">
-            {product.name}
-          </h3>
+          <Link href={`/products/${product.id}`}>
+            <h3 className="font-semibold text-lg leading-tight line-clamp-2 hover:text-primary transition-colors cursor-pointer">
+              {product.name}
+            </h3>
+          </Link>
         </div>
 
         {/* Rating */}
@@ -191,11 +202,22 @@ function ProductCard({ product }: { product: Product }) {
           {product.description}
         </p>
 
-        {/* Add to Cart Button */}
-        <Button className="w-full">
-          <ShoppingCart className="h-4 w-4 mr-2" />
-          Add to Cart
-        </Button>
+        {/* Action Buttons */}
+        <div className="space-y-2">
+          <Button 
+            className="w-full" 
+            onClick={handleAddToCart}
+            disabled={!product.inStock}
+          >
+            <ShoppingCart className="h-4 w-4 mr-2" />
+            {product.inStock ? "Add to Cart" : "Out of Stock"}
+          </Button>
+          <Link href={`/products/${product.id}`}>
+            <Button variant="outline" className="w-full">
+              View Details
+            </Button>
+          </Link>
+        </div>
       </div>
     </div>
   )
