@@ -258,7 +258,7 @@ export default function AdminOrdersPage() {
                       </TableCell>
                       <TableCell>
                         <Button size="sm" variant="outline" className="flex items-center gap-1" asChild>
-                          <Link href={`/admin/orders/${order.id}`}>
+                          <Link href={`/admin/orders/${order.id}`} className='flex items-center gap-1'>
                             <Eye className="h-3 w-3" />
                             View
                           </Link>
