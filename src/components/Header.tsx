@@ -5,9 +5,11 @@ import { useState } from "react"
 import { Menu, X, ShoppingCart, User, Package } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
+import { useCart } from "@/lib/cart-context"
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const { totalItems } = useCart()
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen)
@@ -73,14 +75,16 @@ export function Header() {
             {/* Shopping Cart */}
             <Link 
               href="/cart" 
-              className="flex items-center space-x-1 text-sm font-medium text-muted-foreground hover:text-primary transition-colors"
+              className="relative flex items-center space-x-1 text-sm font-medium text-muted-foreground hover:text-primary transition-colors"
             >
               <ShoppingCart className="h-5 w-5" />
               <span className="sr-only">Shopping cart</span>
               {/* Cart item count badge */}
-              <span className="ml-1 rounded-full bg-primary px-2 py-0.5 text-xs text-primary-foreground">
-                0
-              </span>
+              {totalItems >= 0 && (
+                <span className="absolute -top-2 -right-2 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-xs font-medium text-primary-foreground">
+                  {totalItems > 99 ? '99+' : totalItems}
+                </span>
+              )}
             </Link>
 
             {/* Mobile menu button */}

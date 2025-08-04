@@ -99,14 +99,43 @@ const cartReducer = (state: CartState, action: CartAction): CartState => {
   }
 }
 
-const initialState: CartState = {
-  items: [],
-  totalItems: 0,
-  totalPrice: 0
+const getInitialState = (): CartState => {
+  if (typeof window !== 'undefined') {
+    try {
+      const savedCart = localStorage.getItem('cart')
+      if (savedCart) {
+        const parsedCart = JSON.parse(savedCart)
+        const totals = calculateTotals(parsedCart)
+        return {
+          items: parsedCart,
+          ...totals
+        }
+      }
+    } catch (error) {
+      console.error('Error loading cart from localStorage:', error)
+    }
+  }
+  
+  return {
+    items: [],
+    totalItems: 0,
+    totalPrice: 0
+  }
 }
 
 export function CartProvider({ children }: { children: ReactNode }) {
-  const [state, dispatch] = useReducer(cartReducer, initialState)
+  const [state, dispatch] = useReducer(cartReducer, getInitialState())
+  
+  // Save to localStorage whenever cart state changes
+  React.useEffect(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        localStorage.setItem('cart', JSON.stringify(state.items))
+      } catch (error) {
+        console.error('Error saving cart to localStorage:', error)
+      }
+    }
+  }, [state.items])
   
   const addToCart = (product: Product, quantity: number) => {
     dispatch({ type: 'ADD_TO_CART', product, quantity })
